@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 use bevy::render::pass::ClearColor;
+use rand::prelude::random;
+use bevy::core::FixedTimestep;
 
 const ARENA_WIDTH: u32 = 10;
 const ARENA_HEIGHT: u32 = 10;
@@ -23,6 +25,11 @@ fn main() {
                 .with_system(size_scaling.system()),
         )
         .add_plugins(DefaultPlugins)
+        .add_system_set(
+            SystemSet::new()
+                .with_run_criteria(FixedTimestep::step(1.0))
+                .with_system(food_spawner.system())
+        )
         .run();
 }
 
@@ -30,6 +37,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
     commands.insert_resource(Materials {
         head_material: materials.add(Color::rgb(0.7, 0.7, 0.7).into()),
+        food_material: materials.add(Color::rgb(1.0, 0.0, 1.0).into()),
     });
 }
 
@@ -51,6 +59,7 @@ struct SnakeHead;
 // Resource materials of the snake
 struct Materials {
     head_material: Handle<ColorMaterial>,
+    food_material: Handle<ColorMaterial>,
 }
 
 fn snake_movement(
@@ -116,4 +125,23 @@ fn position_translation(windows: Res<Windows>, mut q: Query<(&Position, &mut Tra
             0.0,
         );
     }
+}
+
+struct Food;
+
+fn food_spawner(
+    mut commands: Commands,
+    materials: Res<Materials>,
+) {
+    commands
+        .spawn_bundle(SpriteBundle {
+            material: materials.food_material.clone(),
+            ..Default::default()
+        })
+        .insert(Food)
+        .insert(Position {
+            x: (random::<f32>() * ARENA_WIDTH as f32) as i32,
+            y: (random::<f32>() * ARENA_HEIGHT as f32) as i32,
+        })
+        .insert(Size::square(0.8));
 }
