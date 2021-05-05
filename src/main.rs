@@ -1,12 +1,20 @@
 use bevy::prelude::*;
+use bevy::render::pass::ClearColor;
 
 const ARENA_WIDTH: u32 = 10;
 const ARENA_HEIGHT: u32 = 10;
 
 fn main() {
     App::build()
+        .insert_resource(WindowDescriptor {
+            title: "Snake!".to_string(),
+            width: 500.0,
+            height: 500.0,
+            ..Default::default()
+        }) // ウインドウを正方形にする
+        .insert_resource(ClearColor(Color::rgb(0.04, 0.04, 0.04))) // 背景の色を黒くする
         .add_startup_system(setup.system())
-        .add_startup_stage("game_setup", SystemStage::single(spawn_snake.system()))
+        .add_startup_stage("game_setup", SystemStage::single(spawn_snake.system())) // Snakeを生成
         .add_system(snake_movement.system())
         .add_system_set_to_stage(
             CoreStage::PostUpdate,
