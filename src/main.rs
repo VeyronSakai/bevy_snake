@@ -18,10 +18,11 @@ fn main() {
         .add_event::<GameOverEvent>()
         .add_startup_system(setup.system())
         .add_startup_stage("game_setup", SystemStage::single(spawn_snake.system())) // Snakeを生成
-        .add_system(snake_movement_input
-            .system()
-            .label(SnakeMovement::Input)
-            .before(SnakeMovement::Movement)
+        .add_system(
+            snake_movement_input
+                .system()
+                .label(SnakeMovement::Input)
+                .before(SnakeMovement::Movement)
         )
         .add_system_set(
             SystemSet::new()
