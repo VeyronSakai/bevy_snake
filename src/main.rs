@@ -142,7 +142,9 @@ fn position_translation(windows: Res<Windows>, mut q: Query<(&Position, &mut Tra
         let tile_size = bound_window / bound_game;
         pos / bound_game * bound_window - (bound_window / 2.) + (tile_size / 2.)
     }
+
     let window = windows.get_primary().unwrap();
+
     for (pos, mut transform) in q.iter_mut() {
         transform.translation = Vec3::new(
             convert(pos.x as f32, window.width() as f32, ARENA_WIDTH as f32),
