@@ -2,7 +2,6 @@ use bevy::prelude::*;
 use bevy::render::pass::ClearColor;
 use rand::prelude::random;
 use bevy::core::FixedTimestep;
-use bevy::app::CoreStage::Update;
 
 const ARENA_WIDTH: u32 = 10;
 const ARENA_HEIGHT: u32 = 10;
@@ -16,6 +15,7 @@ fn main() {
             height: 500.0,
             ..Default::default()
         })
+        .add_plugins(DefaultPlugins)
         // Snakeが大きくなった際に発火されるイベント
         .add_event::<GrowthEvent>()
         // Snakeが壁にぶつかったり自分自身にぶつかった際に発火されるイベント
@@ -55,7 +55,6 @@ fn main() {
                 .with_system(position_translation.system())
                 .with_system(size_scaling.system()),
         )
-        .add_plugins(DefaultPlugins)
         // 新しいStageを作って、そこで実行する
         .add_system_set(
             SystemSet::new()
