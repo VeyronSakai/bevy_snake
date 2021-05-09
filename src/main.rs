@@ -2,22 +2,28 @@ use bevy::prelude::*;
 use bevy::render::pass::ClearColor;
 use rand::prelude::random;
 use bevy::core::FixedTimestep;
+use bevy::app::CoreStage::Update;
 
 const ARENA_WIDTH: u32 = 10;
 const ARENA_HEIGHT: u32 = 10;
 
 fn main() {
     App::build()
+        /// ウインドウの生成
         .insert_resource(WindowDescriptor {
             title: "Snake!".to_string(),
             width: 500.0,
             height: 500.0,
             ..Default::default()
-        })// ウインドウの生成
+        })
+        /// Snakeが大きくなった際に発火されるイベント
         .add_event::<GrowthEvent>()
+        /// Snakeが壁にぶつかったり自分自身にぶつかった際に発火されるイベント
         .add_event::<GameOverEvent>()
+        /// 初期化処理。StartUp Stageで実行される。
         .add_startup_system(setup.system())
-        .add_startup_stage("game_setup", SystemStage::single(spawn_snake.system())) // Snakeを生成
+        /// Snakeを生成する。setupで生成されたmaterialを使う必要があるのでStartUpの直後に実行される別のStageを追加する
+        .add_startup_stage("game_setup", SystemStage::single(spawn_snake.system()))
         .add_system(
             snake_movement_input
                 .system()
@@ -41,6 +47,7 @@ fn main() {
                         .after(SnakeMovement::Eating),
                 )
         )
+        // PostUpdateで実行したいので、add_system_setではなく、add_system_set_to_stageを使う
         .add_system_set_to_stage(
             CoreStage::PostUpdate,
             SystemSet::new()
@@ -48,6 +55,7 @@ fn main() {
                 .with_system(size_scaling.system()),
         )
         .add_plugins(DefaultPlugins)
+        // 新しいStageを作って、そこで実行する
         .add_system_set(
             SystemSet::new()
                 .with_run_criteria(FixedTimestep::step(1.0))
