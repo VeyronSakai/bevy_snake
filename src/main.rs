@@ -13,10 +13,7 @@ fn main() {
             width: 500.0,
             height: 500.0,
             ..Default::default()
-        }) // ウインドウを正方形にする
-        .insert_resource(ClearColor(Color::rgb(0.04, 0.04, 0.04))) // 背景の色を黒くする
-        .insert_resource(SnakeSegments::default())
-        .insert_resource(LastTailPosition::default())
+        })// ウインドウの生成
         .add_event::<GrowthEvent>()
         .add_event::<GameOverEvent>()
         .add_startup_system(setup.system())
@@ -60,12 +57,18 @@ fn main() {
 }
 
 fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
+    // カメラを生成する
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
     commands.insert_resource(Materials {
         head_material: materials.add(Color::rgb(0.7, 0.7, 0.7).into()),
         segment_material: materials.add(Color::rgb(0.3, 0.3, 0.3).into()),
         food_material: materials.add(Color::rgb(1.0, 0.0, 1.0).into()),
     });
+    // 背景の色を黒くする
+    commands.insert_resource(ClearColor(Color::rgb(0.04, 0.04, 0.04)));
+    // Snakeの体をResource化
+    commands.insert_resource(SnakeSegments::default());
+    commands.insert_resource(LastTailPosition::default());
 }
 
 fn spawn_snake(
