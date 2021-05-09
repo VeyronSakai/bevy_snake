@@ -9,20 +9,20 @@ const ARENA_HEIGHT: u32 = 10;
 
 fn main() {
     App::build()
-        /// ウインドウの生成
+        // ウインドウの生成
         .insert_resource(WindowDescriptor {
             title: "Snake!".to_string(),
             width: 500.0,
             height: 500.0,
             ..Default::default()
         })
-        /// Snakeが大きくなった際に発火されるイベント
+        // Snakeが大きくなった際に発火されるイベント
         .add_event::<GrowthEvent>()
-        /// Snakeが壁にぶつかったり自分自身にぶつかった際に発火されるイベント
+        // Snakeが壁にぶつかったり自分自身にぶつかった際に発火されるイベント
         .add_event::<GameOverEvent>()
-        /// 初期化処理。StartUp Stageで実行される。
+        // 初期化処理。StartUp Stageで実行される。
         .add_startup_system(setup.system())
-        /// Snakeを生成する。setupで生成されたmaterialを使う必要があるのでStartUpの直後に実行される別のStageを追加する
+        // Snakeを生成する。setupで生成されたmaterialを使う必要があるのでStartUpの直後に実行される別のStageを追加する
         .add_startup_stage("game_setup", SystemStage::single(spawn_snake.system()))
         .add_system(
             snake_movement_input
@@ -30,6 +30,7 @@ fn main() {
                 .label(SnakeMovement::Input)
                 .before(SnakeMovement::Movement)
         )
+        // 複数のSystemにlabelなどを付けたい場合はadd_system_setを使う
         .add_system_set(
             SystemSet::new()
                 .with_run_criteria(FixedTimestep::step(0.50))
