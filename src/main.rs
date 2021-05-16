@@ -133,8 +133,8 @@ struct Size {
 impl Size {
     pub fn square(x: f32) -> Self {
         Self {
-            width: x,
-            height: x,
+            width: x.clone(),
+            height: x.clone(),
         }
     }
 }
@@ -152,7 +152,7 @@ fn size_scaling(windows: Res<Windows>, mut q: Query<(&Size, &mut Sprite)>) {
 fn position_translation(windows: Res<Windows>, mut q: Query<(&Position, &mut Transform)>) {
     fn convert(pos: f32, bound_window: f32, bound_game: f32) -> f32 {
         let tile_size = bound_window / bound_game;
-        pos / bound_game * bound_window - (bound_window / 2.) + (tile_size / 2.)
+        pos / bound_game.clone() * bound_window.clone() - (bound_window.clone() / 2.) + (tile_size / 2.)
     }
 
     let window = windows.get_primary().unwrap();
@@ -243,7 +243,7 @@ fn spawn_segment(
 ) -> Entity {
     commands
         .spawn_bundle(SpriteBundle {
-            material: material.clone(),
+            material: (*material).clone(),
             ..Default::default()
         })
         .insert(SnakeSegment)
@@ -287,8 +287,8 @@ fn snake_movement(
 
         if head_pos.x < 0
             || head_pos.y < 0
-            || head_pos.x as u32 >= ARENA_WIDTH
-            || head_pos.y as u32 >= ARENA_HEIGHT
+            || head_pos.clone().x as u32 >= ARENA_WIDTH
+            || head_pos.clone().y as u32 >= ARENA_HEIGHT
         {
             game_over_writer.send(GameOverEvent);
         }
